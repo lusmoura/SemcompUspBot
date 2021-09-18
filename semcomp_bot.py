@@ -16,12 +16,13 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 class TelegramBot:
     schedule_filename = 'programacao_semcomp.xlsx'
-    events_list = ['Todos', 
-                   'Palestra', 
+    events_list = ['Palestra', 
                    'Minicurso', 
                    'Roda de Conversa', 
                    'Feira de Oportunidades', 
-                   'Concurso']
+                   'Concurso',
+                   'GameNight',
+                   'Todos']
     overflow_houses = {
                         'Agamotto':'Após perceber diversas ameaças temporais, o Doutor Estranho confiou sua joia àqueles que mais confia: vocês! Bem vindos à casa Agamotto! Focados sempre na resolução de problemas, usamos nossas diferentes magias para alcançar a vitória, superando as fileiras de oponentes que possam aparecer pelo caminho. Então abram seus portais e venham com a gente para mais uma conquista!',
                         'DeLorean':'Great Scott!\nVocês estavam tranquilos no palquinho quando, de repente, surge um carro entre faíscas e raios e invade o local e de dentro dele sai um homem de idade, com cabelo branco bagunçado com uma vestimenta dos anos 80. Antes que pudessem fazer qualquer pergunta, vocês ouvem as seguintes palavras: "Depressa! O poder sobre o tempo caiu em mãos erradas! Utilizem esta máquina com responsabilidade e não deixem que interfiram na nossa linha do tempo! Não se esqueça, o futuro ainda não está escrito, o de ninguém está. Seu futuro será o que você quiser, então faça dele algo bom',
@@ -66,10 +67,12 @@ class TelegramBot:
         buttons = []
         events_list = self.events_list  
 
-        for i in range(0, len(events_list), 2):
+        for i in range(0, len(events_list)-1, 2):
             buttons.append([InlineKeyboardButton(text=events_list[i], callback_data=f'event-{events_list[i]}'),
                             InlineKeyboardButton(text=events_list[i+1], callback_data=f'event-{events_list[i+1]}'),
             ])
+
+        buttons.append([InlineKeyboardButton(text=events_list[len(events_list)-1], callback_data=f'event-{events_list[len(events_list)-1]}')])
 
         if len(buttons) == 0:
             return None
