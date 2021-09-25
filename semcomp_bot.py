@@ -23,6 +23,12 @@ class TelegramBot:
                    'Concurso',
                    'GameNight',
                    'Todos']
+    overflow_houses = {
+                        'Agamotto':'Após perceber diversas ameaças temporais, o Doutor Estranho confiou sua joia àqueles que mais confia: vocês! Bem vindos à casa Agamotto! Focados sempre na resolução de problemas, usamos nossas diferentes magias para alcançar a vitória, superando as fileiras de oponentes que possam aparecer pelo caminho. Então abram seus portais e venham com a gente para mais uma conquista!',
+                        'DeLorean':'Great Scott!\nVocês estavam tranquilos no palquinho quando, de repente, surge um carro entre faíscas e raios e invade o local e de dentro dele sai um homem de idade, com cabelo branco bagunçado com uma vestimenta dos anos 80. Antes que pudessem fazer qualquer pergunta, vocês ouvem as seguintes palavras: "Depressa! O poder sobre o tempo caiu em mãos erradas! Utilizem esta máquina com responsabilidade e não deixem que interfiram na nossa linha do tempo! Não se esqueça, o futuro ainda não está escrito, o de ninguém está. Seu futuro será o que você quiser, então faça dele algo bom',
+                        'Ocarina':'Evoé, caros Representantes do Reino Sagrado! Diante dos poderes vindos de Farore, Din e Nayru, a Triforce que rege Hyrule, um item chave foi atribuída como elo entre as eras, a chamada Ocarina do Tempo. Usando de seus poderes e da magia das músicas que permeiam todo esse mundo, desafie os oponentes que ousarem destruir esse equilíbrio. Saquem suas ocarinas e partam para uma nova canção da vitória!',
+                        'Tardis':'O Doutor (Doutor quem?) detectou alguém tentando alterar um ponto fixo no tempo e resolveu viajar um milhão de anos no futuro para visitar a biblioteca do ICMC e pesquisar o que ele pode fazer sobre isso. Mas não se preocupem! Ele já os informou sobre todos os perigos e com certeza, eventualmente, vai aparecer e resolver tudo com sua chave de fenda sônica que, apesar do nome, raramente é usada para apertar ou afrouxar parafusos.Muito cuidado! Antes de ir, o Doutor (Doutor quem?) disse que esse é um inimigo pior do que os Daleks e os Cybermen, mais astuto do que o Mestre e mais perigoso do que os Vashta Nerada. Por isso, não pisquem nem por um segundo e sempre confiem uns nos outros, mas em mais ninguém! Allons-y!'
+                        }
 
     def __init__(self):
         creds = env_file.get('.env')
@@ -46,6 +52,7 @@ class TelegramBot:
         /hoje - Ver eventos de hoje.
         /amanha - Ver eventos de amanhã.
         /proximos - Ver todos os eventos.
+        /overflow - Ver detalhes das casas do Overflow.
         '''
         
         context.bot.send_message(chat_id=update.message.chat_id, text=commands)
