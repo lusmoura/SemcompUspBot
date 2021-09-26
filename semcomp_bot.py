@@ -8,6 +8,7 @@ import dateutil.parser
 import pandas as pd
 
 from sqlite3 import Error
+from requests_html import HTMLSession
 from datetime import datetime, timedelta, date
 
 from telegram.ext import *
@@ -23,6 +24,7 @@ class TelegramBot:
                    'Concurso',
                    'GameNight',
                    'Todos']
+
     overflow_houses = {
                         'Agamotto':'Após perceber diversas ameaças temporais, o Doutor Estranho confiou sua joia àqueles que mais confia: vocês! Bem vindos à casa Agamotto! Focados sempre na resolução de problemas, usamos nossas diferentes magias para alcançar a vitória, superando as fileiras de oponentes que possam aparecer pelo caminho. Então abram seus portais e venham com a gente para mais uma conquista!',
                         'DeLorean':'Great Scott!\nVocês estavam tranquilos no palquinho quando, de repente, surge um carro entre faíscas e raios e invade o local e de dentro dele sai um homem de idade, com cabelo branco bagunçado com uma vestimenta dos anos 80. Antes que pudessem fazer qualquer pergunta, vocês ouvem as seguintes palavras: "Depressa! O poder sobre o tempo caiu em mãos erradas! Utilizem esta máquina com responsabilidade e não deixem que interfiram na nossa linha do tempo! Não se esqueça, o futuro ainda não está escrito, o de ninguém está. Seu futuro será o que você quiser, então faça dele algo bom',
@@ -33,7 +35,9 @@ class TelegramBot:
     def __init__(self):
         creds = env_file.get('.env')
         self.TOKEN = creds['TOKEN']
+        self.ENDPOINT = creds['ENDPOINT']
         self.schedule = self.get_schedule()
+        self.session = HTMLSession()
     
     def log(self, event, id):
         text = f'{id} - {event}'
@@ -162,14 +166,42 @@ class TelegramBot:
 
     def send_overflow_info(self, update, context, house):
         chat_id = update.effective_chat.id
-        text = self.get_oveflow_text(house)
+        text = self.get_oveflow_text(house, chat_id)
         context.bot.send_message(chat_id=chat_id, text=text)
     
-    def get_oveflow_text(self, house):
+    def get_emoji(self, house):
+        if house == 'Agamotto':
+            return '\U0001F49A'
+        elif house == 'DeLorean':
+            return '\U00002764'
+        elif house == 'Ocarina':
+            return '\U0001F49B'
+        elif house == 'Tardis':
+            return '\U0001F499'
+
+    def get_house_points(self, house, chat_id):
+        self.log('Request', chat_id)
+        response = self.session.get(self.ENDPOINT)
+        data_json = response.json()
+
         if house == 'Todas':
-            text = 'Pontuação de todas as casas'
+            text = ''
+            for h in data_json:
+                emoji = self.get_emoji(h['name'])
+                text += f"- {emoji} {h['name']}: {h['score']} pontos\n"
+            return text
+            
+        for h in data_json:
+            if h['name'] == house:
+                return f"{h['score']}"
+
+        return '-1'
+
+    def get_oveflow_text(self, house, chat_id):
+        if house == 'Todas':
+            text = self.get_house_points(house, chat_id)
         else:
-            text = self.overflow_houses[house] + '\n\n' + 'Pontuação: 0'
+            text = self.overflow_houses[house] + '\n\n' + self.get_emoji(house) + ' Pontuação: ' + self.get_house_points(house, chat_id)
         
         return text
 
